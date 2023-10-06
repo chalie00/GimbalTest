@@ -1,0 +1,145 @@
+Dialog - 'Gimbal TBX Series'    (L2240, T165, R3520, B885)
+['Dialog', 'Gimbal TBX Series', 'Gimbal TBX SeriesDialog', 'Dialog0', 'Dialog1']
+child_window(title="Gimbal TBX Series", control_type="Window")
+   | 
+   | Dialog - 'Quit'    (L2724, T476, R3035, B573)
+   | ['Dialog2', 'Quit', 'QuitDialog']
+   | child_window(title="Quit", control_type="Window")
+   |    | 
+   |    | TitleBar - ''    (L2740, T448, R3035, B476)
+   |    | ['TitleBar', 'LRFTitleBar', 'TitleBar0', 'TitleBar1']
+   |    |    | 
+   |    |    | Menu - '시스템'    (L2724, T453, R2746, B475)
+   |    |    | ['Menu', '시스템', '시스템Menu', '시스템0', '시스템1', 'Menu0', 'Menu1', '시스템Menu0', '시스템Menu1']
+   |    |    | child_window(title="시스템", auto_id="MenuBar", control_type="MenuBar")
+   |    |    |    | 
+   |    |    |    | MenuItem - '시스템'    (L2724, T453, R2746, B475)
+   |    |    |    | ['시스템2', 'MenuItem', '시스템MenuItem', 'MenuItem0', 'MenuItem1', '시스템MenuItem0', '시스템MenuItem1']
+   |    |    |    | child_window(title="시스템", control_type="MenuItem")
+   |    |    | 
+   |    |    | Button - '닫기'    (L3002, T446, R3036, B476)
+   |    |    | ['닫기', 'Button', '닫기Button', 'Button0', 'Button1', '닫기0', '닫기1', '닫기Button0', '닫기Button1']
+   |    |    | child_window(title="닫기", control_type="Button")
+   |    | 
+   |    | Button - 'Yes'    (L2969, T536, R3023, B561)
+   |    | ['Yes', 'Button2', 'YesButton']
+   |    | child_window(title="Yes", control_type="Button")
+   |    | 
+   |    | Button - 'No'    (L2909, T536, R2963, B561)
+   |    | ['Button3', 'NoButton', 'No']
+   |    | child_window(title="No", control_type="Button")
+   | 
+   | TitleBar - ''    (L2256, T137, R3520, B165)
+   | ['TitleBar2']
+   |    | 
+   |    | Menu - '시스템'    (L2240, T142, R2262, B164)
+   |    | ['Menu2', '시스템3', '시스템Menu2']
+   |    | child_window(title="시스템", auto_id="MenuBar", control_type="MenuBar")
+   |    |    | 
+   |    |    | MenuItem - '시스템'    (L2240, T142, R2262, B164)
+   |    |    | ['시스템4', 'MenuItem2', '시스템MenuItem2']
+   |    |    | child_window(title="시스템", control_type="MenuItem")
+   |    | 
+   |    | Button - '최소화'    (L3381, T135, R3428, B165)
+   |    | ['최소화', 'Button4', '최소화Button']
+   |    | child_window(title="최소화", control_type="Button")
+   |    | 
+   |    | Button - '최대화'    (L3428, T135, R3474, B165)
+   |    | ['최대화', 'Button5', '최대화Button']
+   |    | child_window(title="최대화", control_type="Button")
+   |    | 
+   |    | Button - '닫기'    (L3474, T135, R3521, B165)
+   |    | ['닫기2', 'Button6', '닫기Button2']
+   |    | child_window(title="닫기", control_type="Button")
+   | 
+   | Static - ''    (L2352, T170, R2452, B186)
+   | ['Static', 'Static0', 'Static1']
+   | 
+   | Static - ''    (L2562, T170, R2682, B186)
+   | ['Static2']
+   | 
+   | Static - ''    (L2692, T170, R2812, B186)
+   | ['Static3']
+   | 
+   | Static - ''    (L2822, T170, R2952, B186)
+   | ['Static4']
+   | 
+   | Static - '2023-09-25 11:06:01 (월)'    (L3340, T169, R3505, B187)
+   | ['2023-09-25 11:06:01 (월)', '2023-09-25 11:06:01 (월)Static', 'Static5']
+   | child_window(title="2023-09-25 11:06:01 (월)", control_type="Text")
+   | 
+   | Pane - ''    (L2240, T189, R2560, B250)
+   | ['Pane', 'Pane0', 'Pane1']
+   |    | 
+   |    | CheckBox - 'POWER'    (L2254, T189, R2324, B249)
+   |    | ['CheckBox', 'POWERCheckBox', 'POWER', 'CheckBox0', 'CheckBox1']
+   |    | child_window(title="POWER", control_type="CheckBox")
+   |    | 
+   |    | CheckBox - 'EO'    (L2329, T189, R2399, B249)
+   |    | ['EO', 'CheckBox2', 'EOCheckBox']
+   |    | child_window(title="EO", control_type="CheckBox")
+   |    | 
+   |    | CheckBox - 'IR'    (L2404, T189, R2474, B249)
+   |    | ['CheckBox3', 'IR', 'IRCheckBox']
+   |    | child_window(title="IR", control_type="CheckBox")
+   |    | 
+   |    | CheckBox - 'GIMBAL'    (L2479, T189, R2549, B249)
+   |    | ['CheckBox4', 'GIMBAL', 'GIMBALCheckBox']
+   |    | child_window(title="GIMBAL", control_type="CheckBox")
+   | 
+   | Static - 'Zoom'    (L2391, T763, R2441, B777)
+   | ['ZoomStatic', 'Zoom', 'Static6']
+   | child_window(title="Zoom", control_type="Text")
+   | 
+   | Static - 'Focus'    (L2391, T794, R2441, B808)
+   | ['Focus', 'FocusStatic', 'Static7']
+   | child_window(title="Focus", control_type="Text")
+   | 
+   | Slider - ''    (L2401, T833, R2501, B881)
+   | ['Slider', 'FocusSlider', 'Zoom SpeedSlider']
+   |    | 
+   |    | Static - 'Zoom Speed'    (L2401, T833, R2468, B844)
+   |    | ['Zoom Speed', 'Zoom SpeedStatic', 'Static8']
+   |    | child_window(title="Zoom Speed", control_type="Text")
+   | 
+   | Static - '6'    (L2512, T851, R2537, B862)
+   | ['6', '6Static', 'Static9']
+   | child_window(title="6", control_type="Text")
+   | 
+   | Pane - ''    (L3280, T730, R3519, B884)
+   | ['Pane2', '2023-09-25 11:06:01 (월)Pane', '6Pane']
+   | 
+   | Static - ''    (L2572, T199, R2612, B217)
+   | ['Static10']
+   | 
+   | Static - ''    (L3290, T199, R3330, B217)
+   | ['Static11']
+   | 
+   | Custom - ''    (L2240, T252, R2560, B729)
+   | ['Custom', 'Power Control SettingCustom']
+   |    | 
+   |    | Pane - ''    (L2240, T252, R2560, B729)
+   |    | ['Pane3', 'Power Control SettingPane']
+   |    |    | 
+   |    |    | GroupBox - ''    (L2253, T264, R2547, B717)
+   |    |    | ['GroupBox', 'Power Control SettingGroupBox']
+   |    |    |    | 
+   |    |    |    | Static - 'Power Control Setting'    (L2253, T264, R2435, B282)
+   |    |    |    | ['Power Control SettingStatic', 'Power Control Setting', 'Static12']
+   |    |    |    | child_window(title="Power Control Setting", control_type="Text")
+   |    |    |    | 
+   |    |    |    | Static - 'EO CAMERA'    (L2274, T318, R2364, B332)
+   |    |    |    | ['EO CAMERAStatic', 'Static13', 'EO CAMERA']
+   |    |    |    | child_window(title="EO CAMERA", control_type="Text")
+   |    |    |    | 
+   |    |    |    | Static - 'IR CAMERA'    (L2274, T358, R2364, B372)
+   |    |    |    | ['IR CAMERAStatic', 'IR CAMERA', 'Static14']
+   |    |    |    | child_window(title="IR CAMERA", control_type="Text")
+   |    |    |    | 
+   |    |    |    | Static - 'HEATER'    (L2274, T398, R2364, B412)
+   |    |    |    | ['HEATERStatic', 'HEATER', 'Static15']
+   |    |    |    | child_window(title="HEATER", control_type="Text")
+   |    |    |    | 
+   |    |    |    | Static - 'LRF'    (L2274, T438, R2364, B452)
+   |    |    |    | ['LRFStatic', 'LRF', 'Static16']
+   |    |    |    | child_window(title="LRF", control_type="Text")
