@@ -2,6 +2,7 @@ import pytesseract
 import cv2
 import numpy as np
 
+
 # HSV 색상(Hue), 채도(Saturation), 명도(Value)의 좌표
 def image_to_string_with_hsk(image_path):
     # Load The Image
@@ -64,4 +65,3 @@ def generate_txt_array_with_img(processed_img, txt_title):
     note_memo = [v for v in note_memo if v]
 
     return note_memo
-

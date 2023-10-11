@@ -1,15 +1,20 @@
 import time
+from typing import Any
+
 import numpy as np
+import os.path
 
 import pytesseract
 import xlsxwriter
 import pyocr
 import cv2
+import openpyxl
 
-import Constants
+import Constants as cons
 
-from pywinauto import mouse
+from pywinauto import mouse, WindowSpecification
 from PIL import Image
+from pynput.mouse import Listener, Button
 
 
 def login_correct_WithOnlyPW(dia, pw):
@@ -20,34 +25,100 @@ def login_correct_WithOnlyPW(dia, pw):
     dia['OK'].click()
 
 
-def capture_Menu(dia, menus):
-    workbook = xlsxwriter.Workbook(r'TestResult\Menu Capture.xlsx')
-    worksheet = workbook.add_worksheet()
-    row_position = 0
+# Upload To The Excel File With Menus(can select object) Array
+def upload_excel_with_menus(dia, menus):
+    if os.path.isfile(r'TestResult\Test Report.xlsx'):
+        print('Report file is exist')
+        wb = openpyxl.load_workbook(r'TestResult\Test Report.xlsx')
+        sh = wb.active
+        capture_after_check_menus_count(wb, sh, dia, menus)
+    else:
+        print('Report file is not exist')
+        wb = openpyxl.Workbook()
+        sh = wb.active
+        capture_after_check_menus_count(wb, sh, dia, menus)
 
-    for row_num, menu in enumerate(menus):
-        row_num = row_position
-        dia.child_window(title=f'{menu}', control_type='CheckBox').click_input()
-        dia.capture_as_image().save(f'Capture/{menu}.png')
-        worksheet.write(row_num, 0, menu)
-        worksheet.insert_image(row_num + 1, 0, f'Capture/{menu}.png')
 
+# Upload To The Excel File With Coordinate(can't select object) Array
+# After Check The Excel File
+def upload_excel_after_check_Report(dia: WindowSpecification, coordinates: [{str: str, str: [int]}]):
+    if os.path.isfile(r'TestResult\Test Report.xlsx'):
+        wb = openpyxl.load_workbook(r'TestResult\Test Report.xlsx')
+        sh = wb.active
+        capture_upload_excel_with_coordinate(dia, wb, sh, coordinates)
+    else:
+        wb = openpyxl.Workbook()
+        sh = wb.active
+        capture_upload_excel_with_coordinate(dia, wb, sh, coordinates)
+
+
+# Upload To The Excel File With Coordinate(can't select object) Array
+def capture_upload_excel_with_coordinate(dia: WindowSpecification, wb: None, sh: None, coordinates: [{str: str, str: [int]}]):
+    for coordinate in coordinates:
+        area_capture_with_coordinate(dia, coordinate['name'], coordinate['coord'])
+        sh.cell(row=cons.excel_No, column=1, value=f'{coordinate["name"]} Crop')
+        img = openpyxl.drawing.image.Image(rf'Capture\{coordinate["name"]}_crop.png')
+        sh.add_image(img, f'A{cons.excel_No + 1}')
         time.sleep(1)
-        row_position += 38
+        cons.excel_No += 3
+    wb.save(r'TestResult\Test Report.xlsx')
 
-    workbook.close()
+
+# Check Menu Array Count And Capture
+def capture_after_check_menus_count(wb, sh, dia, menus):
+    if len(menus) > 1:
+        for i, menu in enumerate(menus):
+            dia.child_window(title=f'{menu}', control_type='CheckBox').click_input()
+            dia.capture_as_image().save(f'Capture/{menu}.png')
+            sh.cell(row=cons.excel_No, column=1, value=rf'{menus[i]}')
+            img = openpyxl.drawing.image.Image(rf'Capture\{menus[i]}.png')
+            sh.add_image(img, f'A{cons.excel_No + 1}')
+            time.sleep(1)
+            cons.excel_No += 35
+        wb.save(r'TestResult\Test Report.xlsx')
+    else:
+        dia.capture_as_image().save(rf'Capture\{menus[0]}.png')
+        time.sleep(1)
+        sh.cell(row=cons.excel_No, column=1, value=f'{menus[0]}')
+        img = openpyxl.drawing.image.Image(rf'Capture\{menus[0]}.png')
+        sh.add_image(img, f'A{cons.excel_No + 1}')
+        time.sleep(1)
+        cons.excel_No += 35
+        wb.save(r'TestResult\Test Report.xlsx')
 
 
-def cal_element_coordinate(x, y, w, h):
-    ele_coord = {'x': 0,
-                 'y': 0,
-                 'w': 0,
-                 'h': 0}
-    coordinate_array = Constants.main_Dig_Coordinate
-    ele_coord['x'] = x - coordinate_array[0]
-    ele_coord['y'] = y - coordinate_array[1]
-    ele_coord['w'] = w - coordinate_array[0]
-    ele_coord['h'] = h - coordinate_array[1]
+#  Calculate coordinates from the zero position in the main frame
+#  to the selected element
+def cal_element_coordinate(left, top, right, bottom):
+    ele_coord = {'l': 0,
+                 't': 0,
+                 'r': 0,
+                 'b': 0}
+    coordinate_array = cons.Dig_zero_Coordinate
+    ele_coord['l'] = left - coordinate_array[0]
+    ele_coord['t'] = top - coordinate_array[1]
+    ele_coord['r'] = right - coordinate_array[0]
+    ele_coord['b'] = bottom - coordinate_array[1]
 
     return ele_coord
 
+
+# Capture selected Area or Element
+def area_capture_with_coordinate(dia: WindowSpecification, title: str, coordinate: [int]):
+    coord = cal_element_coordinate(coordinate[0], coordinate[1],
+                                   coordinate[2], coordinate[3])
+    img = dia.capture_as_image()
+    (img.crop([coord['l'], coord['t'], coord['r'], coord['b']])
+     .save(fr'Capture\{title}_crop.png'))
+
+# # Function called on a mouse click
+# def on_click(x, y, button, pressed):
+#     # Check if the left button was pressed
+#     if pressed and button == Button.left:
+#         # Print the click coordinates
+#         print(f'x={x} and y={y}')
+#
+#
+# # Initialize the Listener to monitor mouse clicks
+# with Listener(on_click=on_click) as listener:
+#     listener.join()

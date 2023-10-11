@@ -1,3 +1,22 @@
 import pywinauto
 
-main_Dig_Coordinate = [2240, 165, 3520, 885]
+excel_No = 1
+
+Dig_zero_Coordinate = [2240, 165, 3520, 885]
+left_menu_hide = [2264, 179]
+left_menu_show = [2284, 179]
+aspect_ratio = [3150, 177]
+yaw_lt_rb = [2561, 170, 2682, 186]
+pitch_lt_rb = [2692, 170, 2812, 186]
+
+# POWER Tab (Power Control Setting)
+eo_power_on = [2404, 328]
+eo_power_off = [2479, 328]
+
+# Display Power UI
+gimbal_power_ui = [3293, 757, 3358, 795]
+eo_power_ui = [3365, 755, 3428, 794]
+ir_power_ui = [3435, 754, 3504, 794]
+fan_power_ui = [3293, 818, 3355, 852]
+heater_power_ui = [3365, 817, 3429, 851]
+lrf_power_ui = [3438, 815, 3502, 852]
