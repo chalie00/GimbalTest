@@ -1,6 +1,7 @@
 import Constants as cons
 import Major_Function as mf
 import CHARACTER_TRANSFORMATION as ct
+import ReportFormat as rf
 
 import os
 import time
@@ -9,10 +10,21 @@ import pandas as pd
 import pytesseract
 import pyautogui
 
-
 from pywinauto import Application, keyboard, mouse
 from pywinauto_recorder.player import *
 from PIL import Image, ImageGrab
+
+# Type The Verifier information
+print('Please type the verifier info\n')
+verifier_name = input('verifier name?\n')
+verification_date = cons.today_time_format
+verification_location = input('Verifier Location?\n')
+verification_model = input('Verify Model?')
+
+# TODO Today Implement
+verifier = rf.VerifierInfo(name=verifier_name, date=verification_date,
+                           location=verification_location, model=verification_model)
+rf.set_report_format(verification_date, verification_model)
 
 # Start with Application Object
 app = Application(backend='uia').start(r'C:\GimbalTBX\GimbalTBX.exe')
@@ -178,3 +190,4 @@ area_capture_dic = [{'name': 'Gimbal Power Off', "coord": cons.gimbal_power_ui},
                     {'name': 'LRF Power Off', "coord": cons.lrf_power_ui}
                     ]
 mf.upload_excel_after_check_Report(mainDlg, area_capture_dic)
+

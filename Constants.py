@@ -1,7 +1,14 @@
 import pywinauto
+from datetime import date, datetime
 
 excel_No = 1
 
+today = date.today()
+today_time_now = datetime.now()
+today_time_format = today_time_now.strftime("%b-%d-%Y-%H-%M-%S")
+today_format = today.strftime("%b-%d-%Y")
+
+# Element Coordinate
 Dig_zero_Coordinate = [2240, 165, 3520, 885]
 left_menu_hide = [2264, 179]
 left_menu_show = [2284, 179]
