@@ -27,9 +27,9 @@ def login_correct_WithOnlyPW(dia, pw):
 
 # Upload To The Excel File With Menus(can select object) Array
 def upload_excel_with_menus(dia, menus):
-    if os.path.isfile(r'TestResult\Test Report.xlsx'):
+    if os.path.isfile(cons.report_path):
         print('Report file is exist')
-        wb = openpyxl.load_workbook(r'TestResult\Test Report.xlsx')
+        wb = openpyxl.load_workbook(cons.report_path)
         sh = wb.active
         capture_after_check_menus_count(wb, sh, dia, menus)
     else:
@@ -42,8 +42,8 @@ def upload_excel_with_menus(dia, menus):
 # Upload To The Excel File With Coordinate(can't select object) Array
 # After Check The Excel File
 def upload_excel_after_check_Report(dia: WindowSpecification, coordinates: [{str: str, str: [int]}]):
-    if os.path.isfile(r'TestResult\Test Report.xlsx'):
-        wb = openpyxl.load_workbook(r'TestResult\Test Report.xlsx')
+    if os.path.isfile(cons.report_path):
+        wb = openpyxl.load_workbook(cons.report_path)
         sh = wb.active
         capture_upload_excel_with_coordinate(dia, wb, sh, coordinates)
     else:
@@ -61,7 +61,7 @@ def capture_upload_excel_with_coordinate(dia: WindowSpecification, wb: None, sh:
         sh.add_image(img, f'A{cons.excel_No + 1}')
         time.sleep(1)
         cons.excel_No += 3
-    wb.save(r'TestResult\Test Report.xlsx')
+    wb.save(cons.report_path)
 
 
 # Check Menu Array Count And Capture
@@ -75,7 +75,7 @@ def capture_after_check_menus_count(wb, sh, dia, menus):
             sh.add_image(img, f'A{cons.excel_No + 1}')
             time.sleep(1)
             cons.excel_No += 35
-        wb.save(r'TestResult\Test Report.xlsx')
+        wb.save(cons.report_path)
     else:
         dia.capture_as_image().save(rf'Capture\{menus[0]}.png')
         time.sleep(1)
@@ -84,7 +84,7 @@ def capture_after_check_menus_count(wb, sh, dia, menus):
         sh.add_image(img, f'A{cons.excel_No + 1}')
         time.sleep(1)
         cons.excel_No += 35
-        wb.save(r'TestResult\Test Report.xlsx')
+        wb.save(cons.report_path)
 
 
 #  Calculate coordinates from the zero position in the main frame

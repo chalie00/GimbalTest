@@ -8,6 +8,16 @@ today_time_now = datetime.now()
 today_time_format = today_time_now.strftime("%b-%d-%Y-%H-%M-%S")
 today_format = today.strftime("%b-%d-%Y")
 
+# Report File Constants
+report_path = rf'TestResult\Test Report_{today_time_format}.xlsx'
+user_info_title = ['Category', 'Information']
+user_info_title_pos = {'column': 2, 'row': 6}
+user_data_area = {'start': 'B6', 'end': 'C10'}
+
+product_info_title = ['Product_Name', 'Firmware']
+product_info_title_pos = {'column': 5, 'row': 6}
+product_data_area = {'start': 'E6', 'end': 'F12'}
+
 # Element Coordinate
 Dig_zero_Coordinate = [2240, 165, 3520, 885]
 left_menu_hide = [2264, 179]
