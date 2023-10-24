@@ -4,6 +4,7 @@ from typing import Any
 import numpy as np
 import os.path
 
+import pyautogui
 import pytesseract
 import xlsxwriter
 import pyocr
@@ -53,7 +54,8 @@ def upload_excel_after_check_Report(dia: WindowSpecification, coordinates: [{str
 
 
 # Upload To The Excel File With Coordinate(can't select object) Array
-def capture_upload_excel_with_coordinate(dia: WindowSpecification, wb: None, sh: None, coordinates: [{str: str, str: [int]}]):
+def capture_upload_excel_with_coordinate(dia: WindowSpecification, wb: None, sh: None,
+                                         coordinates: [{str: str, str: [int]}]):
     for coordinate in coordinates:
         area_capture_with_coordinate(dia, coordinate['name'], coordinate['coord'])
         sh.cell(row=cons.excel_No, column=1, value=f'{coordinate["name"]} Crop')
@@ -111,7 +113,33 @@ def area_capture_with_coordinate(dia: WindowSpecification, title: str, coordinat
     (img.crop([coord['l'], coord['t'], coord['r'], coord['b']])
      .save(fr'Capture\{title}_crop.png'))
 
-# # Function called on a mouse click
+
+# Set the save directory of capture image
+def set_save_image_dir(group, code):
+    current_time = cons.current_time_bdYHMS
+    save_path = rf'Capture\{group}\{code}_{current_time}.png'
+    return save_path
+
+
+# TODO (Com 10/24) - Virtual JoyStick Control By Mouse Drag
+def mouse_drag_drop(start_coord, direction, hold_time, degree, end_coord):
+    pyautogui.moveTo(start_coord[0], start_coord[1])
+    pyautogui.mouseDown()
+    cal_degree = [(abs(end_coord[0] - start_coord[0])) * degree,
+                  (abs(start_coord[1] - end_coord[1])) * degree]
+    print(cal_degree)
+    if direction == 'up':
+        pyautogui.moveTo(start_coord[0], start_coord[1] - cal_degree[1])
+    elif direction == 'down':
+        pyautogui.moveTo(start_coord[0], start_coord[1] + cal_degree[1])
+    elif direction == 'left':
+        pyautogui.moveTo(start_coord[0] - cal_degree[0], start_coord[1])
+    elif direction == 'right':
+        pyautogui.moveTo(start_coord[0] + cal_degree[0], start_coord[1])
+    time.sleep(hold_time)
+    pyautogui.mouseUp()
+
+# Function called on a mouse click
 # def on_click(x, y, button, pressed):
 #     # Check if the left button was pressed
 #     if pressed and button == Button.left:

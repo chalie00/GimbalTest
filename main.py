@@ -2,9 +2,11 @@ import Constants as cons
 import Major_Function as mf
 import CHARACTER_TRANSFORMATION as ct
 import ReportFormat as rf
+import Testcase as tc
 
 import os
 import time
+import xlwings as xw
 import xlsxwriter
 import pandas as pd
 import pytesseract
@@ -14,33 +16,60 @@ from pywinauto import Application, keyboard, mouse
 from pywinauto_recorder.player import *
 from PIL import Image, ImageGrab
 
-# Get The Verifier Information
-user_info = rf.get_user_info()
-
-# Get The Product Information
-rf.get_product_info()
-
-rf.fill_user_product_info(user_info)
-
-# Today Implement
-rf.set_report_format(user_info.date, user_info.model)
+# # Get The Verifier Information
+# user_info = rf.get_user_info()
+#
+# # Get The Product Information
+# rf.get_product_info()
+#
+# rf.fill_user_product_info(user_info)
+#
+# # Today Implement
+# rf.set_report_format(user_info.date, user_info.model)
+#
+# # Fill In The Testcase Field with Generate Code
+# rf.fill_in_testcase_with_generate_code(tc.power_testcase, 'Pow')
 
 # Start with Application Object
 app = Application(backend='uia').start(r'C:\GimbalTBX\GimbalTBX.exe')
 mainDlg = app['Gimbal TBX Series']
 
 # Login -> 닫기 -> 취소
-# mf.login_correct_WithOnlyPW(mainDlg, 'qwer')
-# time.sleep(1)
+mf.login_correct_WithOnlyPW(mainDlg, 'qwer')
+time.sleep(1)
 # mainDlg.child_window(title='닫기', control_type='Button').click()
 # time.sleep(1)
 
-mainDlg.child_window(title="No", control_type='Button').click()
-time.sleep(1)
+# mainDlg.child_window(title="No", control_type='Button').click()
+# time.sleep(1)
+
+# Virtual controller move to up, down, left, right
+mf.mouse_drag_drop(cons.vj_center, 'up', 3, 0.5, cons.vj_up)
+mf.mouse_drag_drop(cons.vj_center, 'up', 3, 1, cons.vj_up)
+mf.mouse_drag_drop(cons.vj_center, 'down', 3, 0.5, cons.vj_down)
+mf.mouse_drag_drop(cons.vj_center, 'down', 3, 1, cons.vj_down)
+mf.mouse_drag_drop(cons.vj_center, 'left', 3, 0.5, cons.vj_left)
+mf.mouse_drag_drop(cons.vj_center, 'left', 3, 1, cons.vj_left)
+mf.mouse_drag_drop(cons.vj_center, 'right', 3, 0.5, cons.vj_right)
+mf.mouse_drag_drop(cons.vj_center, 'right', 3, 1, cons.vj_right)
+
+print('Stop Stop')
+time.sleep(10)
 
 # Left Menu Hidden/Show
 mouse.click(coords=(cons.left_menu_hide[0], cons.left_menu_hide[1]))
+tc.attach_to_report_after_capture_img(mainDlg,
+                                      cons.report_path,
+                                      'Main',
+                                      tc.power_testcase[0]['code'],
+                                      0.125)
 mouse.click(coords=(cons.left_menu_show[0], cons.left_menu_show[1]))
+tc.attach_to_report_after_capture_img(mainDlg,
+                                      cons.report_path,
+                                      'Main',
+                                      tc.power_testcase[1]['code'],
+                                      0.125)
+
 
 # Left Menu Select
 time.sleep(1)
@@ -121,6 +150,4 @@ area_capture_dic = [{'name': 'Gimbal Power Off', "coord": cons.gimbal_power_ui},
                     ]
 mf.upload_excel_after_check_Report(mainDlg, area_capture_dic)
 
-# TODO (Com) - Apply the information in Excel with multiple table
-# TODO Fill In The Test Step and Test Code, Result In Excel
-# TODO (Com) - Modify a Save Path
+

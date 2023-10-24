@@ -3,15 +3,18 @@ import os.path
 import time
 
 import openpyxl
+import xlwings as xw
 
 from dataclasses import dataclass
 from openpyxl.styles import Font, Border, Side, Alignment
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.dimensions import ColumnDimension
 from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.utils.cell import coordinate_from_string, column_index_from_string, get_column_letter
 
 import Constants
 import Constants as cons
+import Testcase as tc
 
 wb = openpyxl.Workbook()
 sh = wb.active
@@ -47,9 +50,9 @@ def get_user_info():
     # Type The Verifier information
     print('Please type the verifier info\n')
     veri_name = input('verifier name?\n')
-    veri_date = cons.today_time_format
+    veri_date = cons.current_time_bdYHMS
     veri_location = input('Verifier Location?\n')
-    veri_model = input('Verify Model?')
+    veri_model = input('Verify Application Name and Version?')
     user_info = VerifierInfo(name=veri_name, date=veri_date,
                              location=veri_location, model=veri_model)
 
@@ -93,8 +96,9 @@ def fill_user_product_info(user):
         ['Verifier', f'{user.name}'],
         ['Date', f'{user.date}'],
         ['Location', f'{user.location}'],
-        ['Model', f'{user.model}']
+        ['Application', f'{user.model}']
     ]
+    # TODO (Com) - Apply the information in Excel with multiple table
     # Create A User Information Table
     make_table_with_title(cons.user_info_title, cons.user_info_title_pos,
                           {'ver': 'center', 'hor': 'center'}, cons.user_data_area)
@@ -103,8 +107,11 @@ def fill_user_product_info(user):
                           {'ver': 'center', 'hor': 'center'}, cons.product_data_area)
     # Fill In The User Field
     for row, info in enumerate(user_info_fields):
-        sh.cell(column=2, row=row + 7, value=info[0])
-        sh.cell(column=3, row=row + 7, value=info[1])
+        sh.cell(column=cons.user_info_title_pos['column'],
+                row=cons.user_info_title_pos['row'] + 1 + row, value=info[0])
+        sh.cell(column=cons.user_info_title_pos['column'] + 1,
+                row=cons.user_info_title_pos['row'] + 1 + row, value=info[1])
+
     # Fill In The Product Field
     for i, product in enumerate(product_info, start=cons.product_info_title_pos['row']):
         sh.cell(column=cons.product_info_title_pos['column'],
@@ -124,26 +131,53 @@ def fill_user_product_info(user):
 # Title
 def set_report_format(date, model):
     sh.title = f'{model}'
-    font_clear_go = Font(
-        name='맑은 고딕',
-        bold=True,
-        size=24
-    )
-    border_title = Border(
-        left=Side(border_style='thin'),
-        right=Side(border_style='thin'),
-        top=Side(border_style='thin'),
-        bottom=Side(border_style='thin')
-    )
+    # Set The Report Title
+    title = sh.merge_cells(start_column=cons.report_title_info['start_col'],
+                           start_row=cons.report_title_info['start_row'],
+                           end_column=cons.report_title_info['end_col'],
+                           end_row=cons.report_title_info['end_row'])
+    title_name = sh.cell(column=cons.report_title_info['start_col'],
+                         row=cons.report_title_info['start_row'],
+                         value=cons.report_title_info['title'])
+    title_name.alignment = Alignment(horizontal=cons.report_title_info['align'],
+                                     vertical=cons.report_title_info['align'])
+    title_name.font = cons.report_title_font
+    border_around_merged_cell(sh, cons.report_title_info['start_col'],
+                              cons.report_title_info['start_row'],
+                              cons.report_title_info['end_col'],
+                              cons.report_title_info['end_row'],
+                              cons.report_title_info['border'])
+    # Set The Testcase Title
+    testcase_titles = [cons.test_pic_pos, cons.test_code_pos, cons.test_dep_pos, cons.test_pre_pos,
+                       cons.test_step_pos, cons.test_expect_pos, cons.test_result_pos, cons.test_time_pos]
 
-    title = sh.merge_cells(start_column=2, start_row=2, end_column=7, end_row=4)
-    title_name = sh.cell(row=2, column=2, value='Test Report')
-    title_name.alignment = Alignment(horizontal='center', vertical='center')
-    title_name.font = font_clear_go
-    border_around_merged_cell(sh, 2, 2,
-                              7, 4, 'thin')
+    for title in testcase_titles:
+        test_title = sh.cell(column=title['col'], row=title['row'], value=title['value'])
+        test_title.alignment = Alignment(horizontal='center', vertical='center')
+        test_title.font = cons.test_title_font
+
+    # Test Step Cell Merge
+    sh.merge_cells(start_column=cons.test_step_pos['col'], start_row=cons.test_step_pos['row'],
+                   end_column=cons.test_step_pos['col'] + 1, end_row=cons.test_step_pos['row'])
+
+    # Test Step Cell Stretch
+    stretch_cells = ['F', 'G', 'H', 'I']
+    for cell in stretch_cells:
+        sh.column_dimensions[cell].width = 30
+
+    # Expect Result Merge
+    sh.merge_cells(start_column=cons.test_expect_pos['col'], start_row=cons.test_expect_pos['row'],
+                   end_column=cons.test_expect_pos['col'] + 1, end_row=cons.test_expect_pos['row'])
 
     # Create Excel File By Time
+    wb.save(cons.report_path)
+
+
+# Fill In The Testcase Field
+def fill_in_testcase_with_generate_code(testcase, code_str):
+    whether_check_report()
+    tc.generate_code(testcase, code_str)
+    tc.fill_in_testcase(sh, tc.power_testcase, tc.tc_base_pos)
     wb.save(cons.report_path)
 
 
@@ -220,3 +254,22 @@ def border_around_merged_cell(sheet, start_column, start_row, end_column, end_ro
         left=Side(border_style=f'{style}'),
         bottom=Side(border_style=f'{style}'),
     )
+
+
+# Return moved cell coordinate with coordinate
+def moved_cell_coordinate_with_coordinate(coord, move_column, move_row):
+    xy = coordinate_from_string(coord)
+    x = column_index_from_string(xy[0]) + move_column
+    y = xy[1] + move_row
+    conx = get_column_letter(x)
+    convert_coord = conx + f'{y}'
+    return convert_coord
+
+
+# Return moved tuple data with coordinate
+def moved_cell_tuple_with_coordinate(coord, move_column, move_row):
+    xy = coordinate_from_string(coord)
+    x = column_index_from_string(xy[0]) + move_column
+    y = xy[1] + move_row
+    tuple_data = {'column': x, 'row': y}
+    return tuple_data
