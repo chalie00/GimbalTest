@@ -11,6 +11,7 @@ import xlsxwriter
 import pandas as pd
 import pytesseract
 import pyautogui
+import threading
 
 from pywinauto import Application, keyboard, mouse
 from pywinauto_recorder.player import *
@@ -43,15 +44,21 @@ time.sleep(1)
 # mainDlg.child_window(title="No", control_type='Button').click()
 # time.sleep(1)
 
+# Recording Screen as thread
+rec_th = threading.Thread(target=mf.capture_video_with_area, args=(2, 165, 320, 1280, 750, 12,
+                                                            'Virtual Controller', 'XVID', 20))
+
+rec_th.start()
+
 # Virtual controller move to up, down, left, right
-mf.mouse_drag_drop(cons.vj_center, 'up', 3, 0.5, cons.vj_up)
-mf.mouse_drag_drop(cons.vj_center, 'up', 3, 1, cons.vj_up)
-mf.mouse_drag_drop(cons.vj_center, 'down', 3, 0.5, cons.vj_down)
-mf.mouse_drag_drop(cons.vj_center, 'down', 3, 1, cons.vj_down)
-mf.mouse_drag_drop(cons.vj_center, 'left', 3, 0.5, cons.vj_left)
-mf.mouse_drag_drop(cons.vj_center, 'left', 3, 1, cons.vj_left)
-mf.mouse_drag_drop(cons.vj_center, 'right', 3, 0.5, cons.vj_right)
-mf.mouse_drag_drop(cons.vj_center, 'right', 3, 1, cons.vj_right)
+mf.mouse_drag_drop(cons.vj_center, 'up', 1, 0.5, cons.vj_up)
+mf.mouse_drag_drop(cons.vj_center, 'up', 1, 1, cons.vj_up)
+mf.mouse_drag_drop(cons.vj_center, 'down', 1, 0.5, cons.vj_down)
+mf.mouse_drag_drop(cons.vj_center, 'down', 1, 1, cons.vj_down)
+mf.mouse_drag_drop(cons.vj_center, 'left', 1, 0.5, cons.vj_left)
+mf.mouse_drag_drop(cons.vj_center, 'left', 1, 1, cons.vj_left)
+mf.mouse_drag_drop(cons.vj_center, 'right', 1, 0.5, cons.vj_right)
+mf.mouse_drag_drop(cons.vj_center, 'right', 1, 1, cons.vj_right)
 
 print('Stop Stop')
 time.sleep(10)
@@ -69,7 +76,6 @@ tc.attach_to_report_after_capture_img(mainDlg,
                                       'Main',
                                       tc.power_testcase[1]['code'],
                                       0.125)
-
 
 # Left Menu Select
 time.sleep(1)
@@ -150,4 +156,4 @@ area_capture_dic = [{'name': 'Gimbal Power Off', "coord": cons.gimbal_power_ui},
                     ]
 mf.upload_excel_after_check_Report(mainDlg, area_capture_dic)
 
-
+# TODO have to cleanup the warning or error

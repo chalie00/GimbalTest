@@ -1,17 +1,15 @@
 import os
 
-from openpyxl.drawing.spreadsheet_drawing import AnchorMarker, OneCellAnchor
-from openpyxl.utils.cell import coordinate_from_string, column_index_from_string, get_column_letter
+from openpyxl.drawing.spreadsheet_drawing import AnchorMarker
 
 import Constants as cons
 import ReportFormat as rf
-import  Major_Function as mf
+import Major_Function as mf
 
 import openpyxl
 
-from openpyxl.styles import Font, Alignment
+from openpyxl.styles import Alignment
 
-import ReportFormat
 
 tc_base_pos = {'col': 3, 'row': 21}
 power_testcase = [
@@ -44,7 +42,7 @@ power_testcase = [
 # TODO (future) Create a sheet for each Test Category
 
 
-# TODO (Com 10/19) - Generate Code
+# TODO (Com 10/19) - Generate Test Code
 def generate_code(testcase, code_str):
     case_count = int(len(testcase))
     for i in range(0, case_count):

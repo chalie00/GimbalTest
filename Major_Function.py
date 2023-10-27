@@ -1,21 +1,18 @@
 import time
-from typing import Any
 
 import numpy as np
 import os.path
 
 import pyautogui
-import pytesseract
-import xlsxwriter
-import pyocr
 import cv2
 import openpyxl
 
 import Constants as cons
 
-from pywinauto import mouse, WindowSpecification
-from PIL import Image
+from pywinauto import WindowSpecification
+from PIL import Image, ImageGrab
 from pynput.mouse import Listener, Button
+from mss import mss
 
 
 def login_correct_WithOnlyPW(dia, pw):
@@ -138,6 +135,39 @@ def mouse_drag_drop(start_coord, direction, hold_time, degree, end_coord):
         pyautogui.moveTo(start_coord[0] + cal_degree[0], start_coord[1])
     time.sleep(hold_time)
     pyautogui.mouseUp()
+
+
+# TODO (com 10/27) - Record specify screen while running python code
+# Capture the specify area of screen
+def capture_video_with_area(sel_monitor: int, top: int, left: int, width: int, height: int,
+                            rec_time: int, out_name: str, v_codec: str, fps: int):
+    # Get the resolution of using user monitor
+    screen_size = tuple(pyautogui.size())
+
+    # Set the video codec
+    set_codec = cv2.VideoWriter_fourcc(*f'{v_codec}')
+
+    # Create a videoWriter Object
+    out = cv2.VideoWriter(f'{out_name}.avi', set_codec, fps, (width, height))
+
+    for i in range(int(rec_time * fps)):
+        print('start recording')
+        sct = mss()
+        # Selecting a monitor to capture from multiple monitors
+        mon = sct.monitors[sel_monitor]
+        monitor = {'top': mon['top'] + top, 'left': mon['left'] + left,
+                   'width': 1280, 'height': 750, 'mon': mon}
+        # img = pyautogui.screenshot(region=(320, 165, 1280, 720))
+        img = sct.grab(monitor)
+        frame = np.array(img)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        out.write(frame)
+        # cv2.imshow('screenshot', frame)
+        if cv2.waitKey(1) == ord('q'):
+            break
+    print('end recording')
+    out.release()
+    cv2.destroyAllWindows()
 
 # Function called on a mouse click
 # def on_click(x, y, button, pressed):
