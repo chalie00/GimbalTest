@@ -46,7 +46,7 @@ time.sleep(1)
 
 # Recording Screen as thread
 rec_th = threading.Thread(target=mf.capture_video_with_area, args=(2, 165, 320, 1280, 750, 12,
-                                                            'Virtual Controller', 'XVID', 20))
+                                                                   'Virtual Controller', 'XVID', 20))
 
 rec_th.start()
 

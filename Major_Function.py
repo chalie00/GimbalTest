@@ -6,6 +6,9 @@ import os.path
 import pyautogui
 import cv2
 import openpyxl
+import imgsim
+import torchvision
+import matplotlib.pyplot as plt
 
 import Constants as cons
 
@@ -168,6 +171,125 @@ def capture_video_with_area(sel_monitor: int, top: int, left: int, width: int, h
     print('end recording')
     out.release()
     cv2.destroyAllWindows()
+
+
+# TODO (Com 10/30) - Compare a Image
+def compare_img(base_img_path, target_img_path):
+    vtr = imgsim.Vectorizer()
+    base = cv2.imread(f'{base_img_path}')
+    target = cv2.imread(f'{target_img_path}')
+
+    base_vec = vtr.vectorize(base)
+    target_vec = vtr.vectorize(target)
+    compare_image = imgsim.distance(base_vec, target_vec)
+    print(f'result = round({compare_image})')
+
+    return round(compare_image, 2)
+
+
+# TODO (Com 10/31) - Detect different part of image
+def detect_image_diff(base_img_path, target_img_path):
+    # read the image
+    base = cv2.imread(base_img_path)
+    target = cv2.imread(target_img_path)
+
+    # Calculate a different part of image
+    cal_diff = cv2.absdiff(base, target)
+
+    # Convert GrayScale
+    gray_trg = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
+    gray_cal_diff = cv2.cvtColor(cal_diff, cv2.COLOR_BGR2GRAY)
+
+    # Convert to RGB from BGR
+    base_rgb = cv2.cvtColor(base, cv2.COLOR_BGR2RGB)
+    target_rgb = cv2.cvtColor(target, cv2.COLOR_BGR2RGB)
+
+    # Normalization for applying color map
+    norm_diff = gray_cal_diff / np.max(gray_cal_diff)
+
+    # Weight the difference image to reflect the color of the second image
+    diff_img = cv2.addWeighted(gray_trg, 0.1, gray_cal_diff, 2, 100)
+    diff_colored = np.zeros_like(target_rgb)
+    diff_colored[..., 0] = target_rgb[..., 0] * norm_diff
+    diff_colored[..., 1] = target_rgb[..., 1] * norm_diff
+    diff_colored[..., 2] = target_rgb[..., 2] * norm_diff
+
+    image_info_arrays = [
+        ['base image', 'off'],
+        ['target image', 'off'],
+        ['Difference(Grayscale)', 'off'],
+        ['Difference(Colored)', 'off']
+    ]
+    image_arrays = [base_rgb, target_rgb, diff_img, diff_colored]
+
+    # Display the image in plt
+    align_plot_with_save(2, 2, (30, 30), image_info_arrays, image_arrays)
+
+
+# TODO (Com 10/31) - Display a rectangle after detect different parts of image
+def display_rect_after_detect(base_img_path, target_img_path):
+    # read the image
+    base = cv2.imread(base_img_path)
+    target = cv2.imread(target_img_path)
+
+    # Calculate a different part of image
+    cal_diff = cv2.absdiff(base, target)
+
+    # Convert GrayScale
+    gray_cal_diff = cv2.cvtColor(cal_diff, cv2.COLOR_BGR2GRAY)
+
+    # Convert to RGB from BGR
+    base_rgb = cv2.cvtColor(base, cv2.COLOR_BGR2RGB)
+    target_rgb = cv2.cvtColor(target, cv2.COLOR_BGR2RGB)
+
+    # Normalization for applying color map
+    norm_diff = gray_cal_diff / np.max(gray_cal_diff)
+
+    target_diff = target_rgb.copy()
+    contours, _ = cv2.findContours(gray_cal_diff, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        cv2.rectangle(target_diff, (x, y), (x + w, y + h), (255, 255, 0), 2)
+
+    image_info_arrays = [
+        ['base image', 'off'],
+        ['target image', 'off'],
+        ['Difference(Grayscale)', 'off'],
+        ['Difference(Colored)', 'off']
+    ]
+    image_arrays = [base_rgb, target_rgb, gray_cal_diff, target_diff]
+
+    # Display the image in plt
+    align_plot_with_save(2, 2, (30, 30), image_info_arrays, image_arrays)
+
+
+# TODO (Com 10/31) - Align a plot by axes, save fig image,
+# TODO (Com 10/31) - Save an image with different parts of it marked as squares than another image
+def align_plot_with_save(column: int, row: int, fig_size: (int, int), image_info: [[]], image_array):
+    # Display the result by Matplotlib
+    fig, axes = plt.subplots(row, column, figsize=fig_size)
+
+    # Generate the number of cases with rows and columns
+    axes_arrays: [[int, int]] = []
+    for i in range(0, row):
+        for k in range(0, column):
+            num_cases = [i, k]
+            axes_arrays.append(num_cases)
+
+    # align the plot
+    for i, axes_array in enumerate(axes_arrays, start=0):
+        axes[axes_array[0], axes_array[1]].imshow(image_array[i])
+        axes[axes_array[0], axes_array[1]].set_title(image_info[i][0])
+        axes[axes_array[0], axes_array[1]].axis(image_info[i][1])
+
+    plt.tight_layout()
+    plt.show()
+
+    # Save the image
+    fig.savefig('Compare.png')
+    bbox = axes[1, 1].get_tightbbox(fig.canvas.get_renderer())
+    fig.savefig('Compare2.png', bbox_inches=bbox.transformed(fig.dpi_scale_trans.inverted()))
+
 
 # Function called on a mouse click
 # def on_click(x, y, button, pressed):
